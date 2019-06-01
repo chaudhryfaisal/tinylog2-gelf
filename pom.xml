@@ -6,13 +6,9 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.chaudhryfaisal</groupId>
-    <artifactId>tinylog-gelf-root</artifactId>
+    <artifactId>tinylog2-gelf-root</artifactId>
     <version>0.0.1</version>
     <packaging>pom</packaging>
-
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -37,8 +33,8 @@
         <myMavenRepo.write.url/>
     </properties>
     <modules>
-        <module>tinylog-gelf</module>
-        <module>tinylog-gelf-example</module>
+        <module>tinylog2-gelf</module>
+        <module>tinylog2-gelf-example</module>
     </modules>
 
     <dependencies>
@@ -88,6 +84,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -99,26 +96,26 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>myMavenRepo.read</id>
-            <url>${myMavenRepo.read.url}</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>myMavenRepo.read</id>
-            <url>${myMavenRepo.read.url}</url>
-        </pluginRepository>
-    </pluginRepositories>
-    <distributionManagement>
-        <repository>
-            <id>myMavenRepo.write</id>
-            <url>${myMavenRepo.write.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>myMavenRepo.write</id>
-            <url>${myMavenRepo.write.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>myMavenRepo.read</id>-->
+            <!--<url>${myMavenRepo.read.url}</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
+    <!--<pluginRepositories>-->
+        <!--<pluginRepository>-->
+            <!--<id>myMavenRepo.read</id>-->
+            <!--<url>${myMavenRepo.read.url}</url>-->
+        <!--</pluginRepository>-->
+    <!--</pluginRepositories>-->
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>myMavenRepo.write</id>-->
+            <!--<url>${myMavenRepo.write.url}</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>myMavenRepo.write</id>-->
+            <!--<url>${myMavenRepo.write.url}</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
 </project>

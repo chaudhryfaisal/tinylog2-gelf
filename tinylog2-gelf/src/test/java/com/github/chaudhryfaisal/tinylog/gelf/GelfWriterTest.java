@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 public class GelfWriterTest {
     @Test
     public void getRequiredLogEntryValuesIncludesDefaults() {
-        final Writer gelfWriter = new GelfWriter("localhost");
+        final Writer gelfWriter = new GelfWriter(new HashMap<>());
 
         assertThat(gelfWriter.getRequiredLogEntryValues(),
                 hasItems(LogEntryValue.DATE, LogEntryValue.LEVEL, LogEntryValue.MESSAGE));
@@ -96,12 +96,12 @@ public class GelfWriterTest {
 
     @Test
     public void testFlush() throws Exception {
-        new GelfWriter("localhost").flush();
+        new GelfWriter(new HashMap<>()).flush();
     }
 
     @Test
     public void testClose() throws Exception {
-        final GelfWriter gelfWriter = new GelfWriter();
+        final GelfWriter gelfWriter = new GelfWriter(new HashMap<>());
 //        Configuration.defaultConfig()
 //                .writer(gelfWriter)
 //                .level(Level.INFO)

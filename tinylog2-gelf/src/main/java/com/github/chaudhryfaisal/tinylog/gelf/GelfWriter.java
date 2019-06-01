@@ -14,10 +14,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -104,121 +102,6 @@ public final class GelfWriter implements Writer {
         client = GelfTransports.create(gelfConfiguration);
     }
 
-    /**
-     * Construct a new GelfWriter instance.
-     *
-     * @param server                 the hostname of the GELF-compatible server
-     * @param port                   the port of the GELF-compatible server
-     * @param transport              the transport protocol to use
-     * @param hostname               the hostname of the application
-     * @param requiredLogEntryValues additional information for log messages, see {@link LogEntryValue}
-     * @param staticFields           additional static fields for the GELF messages
-     */
-    public GelfWriter(final String server,
-                      final int port,
-                      final GelfTransports transport,
-                      final String hostname,
-                      final Set<LogEntryValue> requiredLogEntryValues,
-                      final Map<String, Object> staticFields) {
-        this(server, port, transport, hostname, requiredLogEntryValues, staticFields, 512, 1000, 500, -1, false);
-    }
-
-    /**
-     * Construct a new GelfWriter instance which logs to {@code localhost} on the default port ({@code 12201/udp})
-     * using an auto-detected local hostname.
-     */
-    public GelfWriter() {
-        this("localhost", 12201);
-    }
-
-    /**
-     * Construct a new GelfWriter instance.
-     *
-     * @param server the hostname of the GELF-compatible server
-     */
-    public GelfWriter(final String server) {
-        this(server, 12201);
-    }
-
-    /**
-     * Construct a new GelfWriter instance.
-     *
-     * @param server the hostname of the GELF-compatible server
-     * @param port   the port of the GELF-compatible server
-     */
-    public GelfWriter(final String server, final int port) {
-        this(server, port, GelfTransports.UDP, null, EnumSet.noneOf(LogEntryValue.class),
-                Collections.<String, Object>emptyMap(), 512, 1000, 500, -1, false);
-    }
-
-    /**
-     * Construct a new GelfWriter instance.
-     *
-     * @param server   the hostname of the GELF-compatible server
-     * @param port     the port of the GELF-compatible server
-     * @param hostname the hostname of the application
-     */
-    public GelfWriter(final String server, final int port, final String hostname) {
-        this(server, port, GelfTransports.UDP, hostname, EnumSet.noneOf(LogEntryValue.class),
-                Collections.<String, Object>emptyMap(), 512, 1000, 500, -1, false);
-    }
-
-    /**
-     * Construct a new GelfWriter instance.
-     *
-     * @param server                   the hostname of the GELF-compatible server
-     * @param port                     the port of the GELF-compatible server
-     * @param transport                the transport protocol to use
-     * @param hostname                 the hostname of the application
-     * @param additionalLogEntryValues additional information for log messages, see {@link LogEntryValue}
-     * @param staticFields             a list of additional static fields for the GELF messages (key-value-delimiter
-     *                                 is ':')
-     */
-    public GelfWriter(final String server,
-                      final int port,
-                      final String transport,
-                      final String hostname,
-                      final String[] additionalLogEntryValues,
-                      final String[] staticFields) {
-        this(server, port, GelfTransports.valueOf(transport), hostname,
-                buildLogEntryValuesFromString(additionalLogEntryValues), buildStaticFields(staticFields),
-                512, 1000, 500, -1, false);
-    }
-
-    /**
-     * Construct a new GelfWriter instance.
-     *
-     * @param server                   the hostname of the GELF-compatible server
-     * @param port                     the port of the GELF-compatible server
-     * @param transport                the transport protocol to use
-     * @param hostname                 the hostname of the application
-     * @param additionalLogEntryValues additional information for log messages, see {@link LogEntryValue}
-     * @param staticFields             a list of additional static fields for the GELF messages (key-value-delimiter
-     *                                 is ':')
-     * @param queueSize                the size of the internal queue the GELF client is using
-     * @param connectTimeout           the connection timeout for TCP connections in milliseconds
-     * @param reconnectDelay           the time to wait between reconnects in milliseconds
-     * @param sendBufferSize           the size of the socket send buffer in bytes; a value of {@code -1}
-     *                                 deactivates the socket send buffer.
-     * @param tcpNoDelay               {@code true} if Nagle's algorithm should used for TCP connections,
-     *                                 {@code false} otherwise
-     */
-    public GelfWriter(final String server,
-                      final int port,
-                      final String transport,
-                      final String hostname,
-                      final String[] additionalLogEntryValues,
-                      final String[] staticFields,
-                      final int queueSize,
-                      final int connectTimeout,
-                      final int reconnectDelay,
-                      final int sendBufferSize,
-                      final boolean tcpNoDelay) {
-        this(server, port, GelfTransports.valueOf(transport), hostname,
-                buildLogEntryValuesFromString(additionalLogEntryValues), buildStaticFields(staticFields),
-                queueSize, connectTimeout, reconnectDelay, sendBufferSize, tcpNoDelay);
-    }
-
     private static EnumSet<LogEntryValue> buildLogEntryValuesFromString(String... logEntryValues) {
         final EnumSet<LogEntryValue> result = EnumSet.noneOf(LogEntryValue.class);
 
@@ -232,22 +115,6 @@ public final class GelfWriter implements Writer {
     private static EnumSet<LogEntryValue> buildRequiredLogEntryValues(Set<LogEntryValue> additionalValues) {
         final EnumSet<LogEntryValue> result = EnumSet.copyOf(additionalValues);
         result.addAll(BASIC_LOG_ENTRY_VALUES);
-        return result;
-    }
-
-    private static Map<String, Object> buildStaticFields(String[] staticFields) {
-        if (null == staticFields) {
-            return Collections.emptyMap();
-        }
-
-        final Map<String, Object> result = new HashMap<>(staticFields.length);
-        for (String staticField : staticFields) {
-            final int firstSeparatorPosition = staticField.indexOf(FIELD_SEPARATOR);
-            final String key = staticField.substring(0, firstSeparatorPosition);
-            final String value = staticField.substring(firstSeparatorPosition + FIELD_SEPARATOR.length());
-            result.put(key, value);
-        }
-
         return result;
     }
 
@@ -278,10 +145,10 @@ public final class GelfWriter implements Writer {
     public GelfWriter(Map<String, String> p) {
         this(p.getOrDefault("server", "localhost"),
                 Integer.parseInt(p.getOrDefault("port", "12201")),
-                "tcp".equalsIgnoreCase(p.getOrDefault("transport", "12201")) ? GelfTransports.TCP : GelfTransports.UDP,
+                GelfTransports.valueOf(p.getOrDefault("transport", "UDP")),
                 p.getOrDefault("hostname", null),
-                EnumSet.noneOf(LogEntryValue.class),
-                Arrays.stream(p.getOrDefault("staticFields", "").split(",")).map(s -> s.split(":")).collect(Collectors.toMap(s -> s[0], s -> s[1])),
+                buildLogEntryValuesFromString(p.getOrDefault("additionalLogEntryValues", "EXCEPTION")),
+                Arrays.stream(p.getOrDefault("staticFields", "").split(",")).map(s -> s.split(FIELD_SEPARATOR)).collect(Collectors.toMap(s -> s[0], s -> s[1])),
                 Integer.parseInt(p.getOrDefault("queueSize", "512")),
                 Integer.parseInt(p.getOrDefault("connectTimeout", "1000")),
                 Integer.parseInt(p.getOrDefault("recoveryTimeout", "500")),
@@ -324,7 +191,7 @@ public final class GelfWriter implements Writer {
         }
 
         final String methodName = logEntry.getMethodName();
-        if (null != methodName) {
+        if (null != methodName && !"<unknown>".equals(methodName)) {
             messageBuilder.additionalField("sourceMethodName", methodName);
         }
 
